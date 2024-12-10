@@ -20,11 +20,11 @@ def generate_input_file(filename, num_items, max_capacity):
 
 
 # Generate input files for testing with unique filenames
-generate_input_file("knapsack_25_items.txt", 25, 1000)
-generate_input_file("knapsack_50_items.txt", 50, 2000)
-generate_input_file("knapsack_100_items.txt", 100, 4000)
-generate_input_file("knapsack_500_items.txt", 500, 8000)
-generate_input_file("knapsack_1000_items.txt", 1000, 10000)
+generate_input_file("./testcase/knapsack_25_items.txt", 25, 1000)
+generate_input_file("./testcase/knapsack_50_items.txt", 50, 2000)
+generate_input_file("./testcase/knapsack_100_items.txt", 100, 4000)
+generate_input_file("./testcase/knapsack_500_items.txt", 500, 8000)
+generate_input_file("./testcase/knapsack_1000_items.txt", 1000, 10000)
 
 
 
