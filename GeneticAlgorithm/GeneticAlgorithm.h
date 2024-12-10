@@ -1,166 +1,279 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
-// Definitions for genetic algorithm parameters
-#define POP_SIZE 100 // Size of the population (number of individuals)
-#define MAX_GEN 1000 // Maximum number of generations
-#define MUTATION_RATE 0.01 // Probability of mutation per gene
-#define KNAPSACK_CAPACITY 7 // Maximum weight the knapsack can hold
-#define NUM_ITEMS 3 // Number of items available
+// Parameters
+#define POP_SIZE 100       // ขนาดประชากร
+#define MAX_GEN 1000       // จำนวนรอบ
+#define MUTATION_RATE 0.02 // อัตราการกลายพันธุ์
+#define ELITE_SIZE 30      // จำนวน elite
+#define MULTI_PARENT 5     // จำนวน parents ในการทำ multi-parent crossover
 
-// Structure to represent an item with weight and value
-typedef struct {
-    int weight; 
-    int value; 
+typedef struct
+{
+    int weight;
+    int value;
+    double ratio; // value/weight ratio
 } Item;
 
-// Structure to represent an individual solution in the population
-typedef struct {
-    int genes[NUM_ITEMS]; // Binary representation of selected items (1 = selected, 0 = not selected)
-    int fitness; // Fitness score of the individual (higher is better)
+typedef struct
+{
+    int *genes;
+    int fitness;
 } Individual;
 
-// Global arrays for items and population
-Item items[NUM_ITEMS]; 
-Individual population[POP_SIZE]; // Array to store the current population
-Individual new_population[POP_SIZE]; // Array to store the new generation of population
-
-// Function to initialize items with random weights and values
-void initialize_items() {
-    printf("Enter the weight and value of each item:\n");
-    for (int i = 0; i < NUM_ITEMS; i++) {
-        printf("Item %d:\n", i + 1);
-        printf("Weight: ");
-        scanf("%d", &items[i].weight);
-        printf("Value: ");
-        scanf("%d", &items[i].value);
-    }
+// ฟังก์ชันเปรียบเทียบสำหรับการเรียงลำดับประชากร
+static int compare_items(const void *a, const void *b)
+{
+    Item *item1 = (Item *)a;
+    Item *item2 = (Item *)b;
+    if (item1->ratio < item2->ratio)
+        return 1;
+    if (item1->ratio > item2->ratio)
+        return -1;
+    return 0;
 }
 
-// Function to initialize the population with random genes
-void initialize_population() {
-    for (int i = 0; i < POP_SIZE; i++) {
-        for (int j = 0; j < NUM_ITEMS; j++) {
-            population[i].genes[j] = rand() % 2; // Randomly set each gene to 0 or 1
+static int calculate_fitness(Individual *ind, Item *items, int n, int W)
+{
+    int total_weight = 0;
+    int total_value = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        if (ind->genes[i])
+        {
+            total_weight += items[i].weight;
+            total_value += items[i].value;
         }
     }
+
+    // ถ้าน้ำหนักเกิน มี penalty
+    if (total_weight > W)
+    {
+        double overflow_ratio = (double)(total_weight - W) / W;
+        if (overflow_ratio > 0.5)
+            return 0;
+        return (int)(total_value * (1.0 - overflow_ratio));
+    }
+    return total_value;
 }
 
-// Function to calculate the fitness of an individual
-int calculate_fitness(Individual *ind) {
-    int total_weight = 0; // Total weight of selected items
-    int total_value = 0; // Total value of selected items
-    for (int i = 0; i < NUM_ITEMS; i++) {
-        if (ind->genes[i] == 1) { // If the item is selected
-            total_weight += items[i].weight; // Add item's weight
-            total_value += items[i].value; // Add item's value
-        }
+// Roulette Wheel Selection
+static Individual *select_parent(Individual *population, int total_fitness)
+{
+    if (total_fitness == 0)
+    {
+        return &population[rand() % POP_SIZE];
     }
-    // If total weight exceeds the knapsack capacity, fitness is 0
-    if (total_weight > KNAPSACK_CAPACITY) {
-        return 0;
-    }
-    return total_value; // Fitness is the total value of selected items
-}
 
-// Function to evaluate the fitness of all individuals in the population
-void evaluate_population() {
-    for (int i = 0; i < POP_SIZE; i++) {
-        population[i].fitness = calculate_fitness(&population[i]);
-    }
-}
-
-// Function to select a parent using roulette wheel selection
-Individual select_parent() {
-    int total_fitness = 0;
-    // Calculate total fitness of the population
-    for (int i = 0; i < POP_SIZE; i++) {
-        total_fitness += population[i].fitness;
-    }
-    // Select a random point in the fitness space
     int random_value = rand() % total_fitness;
     int running_sum = 0;
-    // Iterate through the population to find the selected parent
-    for (int i = 0; i < POP_SIZE; i++) {
+
+    for (int i = 0; i < POP_SIZE; i++)
+    {
         running_sum += population[i].fitness;
-        if (running_sum > random_value) {
-            return population[i]; // Return the selected parent
+        if (running_sum > random_value)
+        {
+            return &population[i];
         }
     }
-    return population[POP_SIZE - 1]; // Fallback return in case of rounding errors
+    return &population[POP_SIZE - 1];
 }
 
-// Function to perform crossover between two parents to create two children
-void crossover(Individual *parent1, Individual *parent2, Individual *child1, Individual *child2) {
-    int crossover_point = rand() % NUM_ITEMS; // Random crossover point
-    for (int i = 0; i < NUM_ITEMS; i++) {
-        if (i < crossover_point) { // Genes before the crossover point
-            child1->genes[i] = parent1->genes[i];
-            child2->genes[i] = parent2->genes[i];
-        } else { // Genes after the crossover point
-            child1->genes[i] = parent2->genes[i];
-            child2->genes[i] = parent1->genes[i];
+// ฟังก์ชัน repair solution
+static void repair_solution(Individual *ind, Item *items, int n, int W)
+{
+    int total_weight = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (ind->genes[i])
+        {
+            total_weight += items[i].weight;
+        }
+    }
+
+    // ถ้าน้ำหนักเกิน ให้ลบ items ที่มี ratio ต่ำออก
+    if (total_weight > W)
+    {
+        for (int i = n - 1; i >= 0 && total_weight > W; i--)
+        {
+            if (ind->genes[i])
+            {
+                ind->genes[i] = 0;
+                total_weight -= items[i].weight;
+            }
+        }
+    }
+
+    // ถ้าน้ำหนักเหลือ ให้พยายามเพิ่ม items ที่มี ratio สูง
+    for (int i = 0; i < n && total_weight < W; i++)
+    {
+        if (!ind->genes[i] && total_weight + items[i].weight <= W)
+        {
+            ind->genes[i] = 1;
+            total_weight += items[i].weight;
         }
     }
 }
 
-// Function to mutate an individual's genes
-void mutate(Individual *ind) {
-    for (int i = 0; i < NUM_ITEMS; i++) {
-        // Flip the gene with a probability equal to the mutation rate
-        if ((double)rand() / RAND_MAX < MUTATION_RATE) {
-            ind->genes[i] = !ind->genes[i];
+// Multi-parent crossover
+static void advanced_crossover(Individual **parents, Individual *child, int n)
+{
+    int *vote = (int *)calloc(n, sizeof(int));
+
+    // นับ vote จาก parents ทั้งหมด
+    for (int i = 0; i < MULTI_PARENT; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (parents[i]->genes[j])
+            {
+                vote[j]++;
+            }
         }
     }
+
+    // เลือกยีนที่ได้รับ vote มากกว่าครึ่ง
+    for (int i = 0; i < n; i++)
+    {
+        child->genes[i] = (vote[i] > MULTI_PARENT / 2);
+    }
+
+    free(vote);
 }
 
-// Function to create a new generation of the population
-void create_new_population() {
-    for (int i = 0; i < POP_SIZE; i += 2) {
-        // Select two parents using selection
-        Individual parent1 = select_parent();
-        Individual parent2 = select_parent();
-        // Perform crossover to create two children
-        crossover(&parent1, &parent2, &new_population[i], &new_population[i + 1]);
-        // Apply mutation to the children
-        mutate(&new_population[i]);
-        mutate(&new_population[i + 1]);
+static int GA_Process(int n, int *weights, int *values, int W)
+{
+    srand(time(NULL));
+
+    // สร้างและเรียงลำดับ items ตาม ratio
+    Item *items = (Item *)malloc(n * sizeof(Item));
+    for (int i = 0; i < n; i++)
+    {
+        items[i].weight = weights[i];
+        items[i].value = values[i];
+        items[i].ratio = (double)values[i] / weights[i];
     }
-    // Replace the old population with the new generation
-    for (int i = 0; i < POP_SIZE; i++) {
-        population[i] = new_population[i];
+    qsort(items, n, sizeof(Item), compare_items);
+
+    Individual *population = (Individual *)malloc(POP_SIZE * sizeof(Individual));
+    Individual *new_population = (Individual *)malloc(POP_SIZE * sizeof(Individual));
+    Individual **selected_parents = (Individual **)malloc(MULTI_PARENT * sizeof(Individual *));
+    Individual best_ever = {NULL, 0};
+    best_ever.genes = (int *)calloc(n, sizeof(int));
+
+    // Initialize population
+    for (int i = 0; i < POP_SIZE; i++)
+    {
+        population[i].genes = (int *)calloc(n, sizeof(int));
+        new_population[i].genes = (int *)calloc(n, sizeof(int));
+
+        // สร้างโซลูชันแบบ greedy-random
+        int current_weight = 0;
+        for (int j = 0; j < n && current_weight < W; j++)
+        {
+            if (rand() % 100 < (70 - (j * 50 / n)) && // โอกาสลดลงตามลำดับ
+                current_weight + items[j].weight <= W)
+            {
+                population[i].genes[j] = 1;
+                current_weight += items[j].weight;
+            }
+        }
     }
+
+    int generations_without_improvement = 0;
+
+    // Main GA loop
+    for (int gen = 0; gen < MAX_GEN; gen++)
+    {
+        int total_fitness = 0;
+
+        // Calculate fitness
+        for (int i = 0; i < POP_SIZE; i++)
+        {
+            population[i].fitness = calculate_fitness(&population[i], items, n, W);
+            total_fitness += population[i].fitness;
+        }
+
+        // Update best solution
+        for (int i = 0; i < POP_SIZE; i++)
+        {
+            if (population[i].fitness > best_ever.fitness)
+            {
+                memcpy(best_ever.genes, population[i].genes, n * sizeof(int));
+                best_ever.fitness = population[i].fitness;
+                generations_without_improvement = 0;
+                break;
+            }
+        }
+
+        generations_without_improvement++;
+
+        // Elitism
+        for (int i = 0; i < ELITE_SIZE; i++)
+        {
+            memcpy(new_population[i].genes, best_ever.genes, n * sizeof(int));
+            new_population[i].fitness = best_ever.fitness;
+        }
+
+        // Create new population
+        for (int i = ELITE_SIZE; i < POP_SIZE; i++)
+        {
+            // Select parents using Roulette Wheel
+            for (int j = 0; j < MULTI_PARENT; j++)
+            {
+                selected_parents[j] = select_parent(population, total_fitness);
+            }
+
+            // Perform multi-parent crossover
+            advanced_crossover(selected_parents, &new_population[i], n);
+
+            // Mutation
+            for (int j = 0; j < n; j++)
+            {
+                if ((double)rand() / RAND_MAX < MUTATION_RATE)
+                {
+                    new_population[i].genes[j] = !new_population[i].genes[j];
+                }
+            }
+
+            // Repair invalid solutions
+            repair_solution(&new_population[i], items, n, W);
+        }
+
+        // Swap populations
+        Individual *temp = population;
+        population = new_population;
+        new_population = temp;
+
+        // Early stopping
+        if (generations_without_improvement > 300 && gen > MAX_GEN / 2)
+        {
+            break;
+        }
+    }
+
+    int result = best_ever.fitness;
+
+    // Cleanup
+    for (int i = 0; i < POP_SIZE; i++)
+    {
+        free(population[i].genes);
+        free(new_population[i].genes);
+    }
+    free(population);
+    free(new_population);
+    free(selected_parents);
+    free(best_ever.genes);
+    free(items);
+
+    return result;
 }
 
-
-// // Main function
-// int main() {
-//     srand(time(NULL)); // Seed the random number generator
-//     initialize_items(); // Initialize items with random values and weights
-//     initialize_population(); // Initialize population with random solutions
-
-//     // Run the genetic algorithm for a fixed number of generations
-//     for (int gen = 0; gen < MAX_GEN; gen++) {
-//         evaluate_population(); // Evaluate fitness of the population
-//         create_new_population(); // Create the next generation
-//     }
-
-//     // Evaluate the final population and find the best individual
-//     evaluate_population();
-//     Individual best_individual = population[0];
-//     for (int i = 1; i < POP_SIZE; i++) {
-//         if (population[i].fitness > best_individual.fitness) {
-//             best_individual = population[i];
-//         }
-//     }
-
-//     // Print the best solution found
-//     printf("Best solution found:\n");
-//     for (int i = 0; i < NUM_ITEMS; i++) {
-//         printf("%d ", best_individual.genes[i]); // Display the gene (0 or 1)
-//     }
-//     printf("\nFitness: %d\n", best_individual.fitness); // Display the fitness value
-
-//     return 0;
-// }
+int GA_Knapsack(int n, int *weights, int *values, int W)
+{
+    printf("[COMP]Starting Genetic Algorithm knapsack computation...\n");
+    return GA_Process(n, weights, values, W);
+}
