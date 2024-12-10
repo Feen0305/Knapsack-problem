@@ -4,6 +4,7 @@
 #include "BruteForce\BruteForce.h"
 #include "DP_ButtomUp\DP_ButtomUp.h"
 #include "DP_TopDown\DP_TopDown.h"
+#include "Greedy\Greedy.h"
 
 // Function to read weights, values, and weight capacity from a file
 void read_knapsack_input(const char *filename, int **weights, int **values, int *n, int *W) {
@@ -65,6 +66,9 @@ int main() {
         // Call the DP TopDown Knapsack function
         result = DP_TopDown_Knapsack(n, weights, values, W);
         printf("[RESULT]Maximum value in the knapsack (DP-TD): %d\n", result);
+
+        result = Greedy_Knapsack(n, weights, values, W);
+        printf("[RESULT]Approximate Maximum value in the knapsack (Greedy): %d\n", result);
 
         // Free dynamically allocated memory
         free(weights);
