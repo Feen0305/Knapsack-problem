@@ -4,6 +4,7 @@
 #include "BruteForce/BruteForce.h"
 #include "DP_ButtomUp/DP_ButtomUp.h"
 #include "DP_TopDown/DP_TopDown.h"
+#include "Greedy\Greedy.h"
 #include "GeneticAlgorithm/GeneticAlgorithm.h"
 
 // Function to read weights, values, and weight capacity from a file
@@ -55,10 +56,10 @@ int main()
         printf("\n[FILE]Processing file: %s\n", filenames[i]);
         // Read data from the current file
         read_knapsack_input(filenames[i], &weights, &values, &n, &W);
-
-        // Call the Genetic Algorithm Knapsack function
-        result = GA_Knapsack(n, weights, values, W);
-        printf("[RESULT]Maximum value in the knapsack (GA): %d\n", result);
+      
+        // Call the BruteForce Knapsack function
+        //result = BruteForce_Knapsack(n, weights, values, W);
+        //printf("[RESULT]Maximum value in the knapsack(BF): %d\n", result);
 
         // Call the DP BottomUp Knapsack function
         result = DP_BottomUp_Knapsack(n, weights, values, W);
@@ -67,6 +68,13 @@ int main()
         // Call the DP TopDown Knapsack function
         result = DP_TopDown_Knapsack(n, weights, values, W);
         printf("[RESULT]Maximum value in the knapsack (DP-TD): %d\n", result);
+
+        result = Greedy_Knapsack(n, weights, values, W);
+        printf("[RESULT]Approximate Maximum value in the knapsack (Greedy): %d\n", result);
+      
+        // Call the Genetic Algorithm Knapsack function
+        result = GA_Knapsack(n, weights, values, W);
+        printf("[RESULT]Maximum value in the knapsack (GA): %d\n", result);
 
         // Free dynamically allocated memory
         free(weights);
