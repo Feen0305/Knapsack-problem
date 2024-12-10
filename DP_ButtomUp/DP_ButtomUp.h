@@ -3,7 +3,7 @@
 
 // Bottom-Up DP implementation for the 0/1 knapsack problem
 int DP_BottomUp_Knapsack(int n, int *weights, int *values, int W) {
-    printf("[COMP]Starting Dynamic programming BottomUp knapsack computation...\n");
+    // printf("[COMP]Starting Dynamic programming BottomUp knapsack computation...\n");
     // Create a 2D dp table (n + 1 rows x W + 1 columns)
     int **dp = (int **)malloc((n + 1) * sizeof(int *));
     for (int i = 0; i <= n; i++) {

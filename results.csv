@@ -1,0 +1,6 @@
+File,DP-BottomUp Avg Value,DP-BottomUp Avg Time (ms),DP-TopDown Avg Value,DP-TopDown Avg Time (ms),Greedy Avg Value,Greedy Avg Time (ms),GA Avg Value,GA Avg Time (ms)
+testcase/knapsack_25_items.txt,6349,0.122,6349,0.173,6349,0.002,6349,34.474
+testcase/knapsack_50_items.txt,10370,0.430,10370,0.834,10370,0.003,10370,52.307
+testcase/knapsack_100_items.txt,23059,1.788,23059,3.687,23052,0.007,23059,99.943
+testcase/knapsack_500_items.txt,79409,20.464,79409,64.264,79392,0.053,79404,451.577
+testcase/knapsack_1000_items.txt,127659,56.155,127659,175.697,127650,0.090,127652,1105.264

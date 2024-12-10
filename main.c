@@ -4,44 +4,38 @@
 #include <string.h>
 
 // Include algorithm headers
-#include "BruteForce/BruteForce.h"
+// #include "BruteForce/BruteForce.h"
 #include "DP_ButtomUp/DP_ButtomUp.h"
 #include "DP_TopDown/DP_TopDown.h"
 #include "Greedy/Greedy.h"
 #include "GeneticAlgorithm/GeneticAlgorithm.h"
 
+#define iterateRound 3
+
 // Function to read weights, values, and weight capacity from a file
 void read_knapsack_input(const char *filename, int **weights, int **values, int *n, int *W) {
     FILE *file = fopen(filename, "r");
     if (!file) {
-        printf("\033[1;31mError: Could not open file %s\033[0m\n", filename); // Red text for errors
+        printf("\033[1;31mError: Could not open file %s\033[0m\n", filename);
         exit(1);
     }
 
-    // Read the number of items
     fscanf(file, "%d", n);
-
-    // Allocate memory for weights and values
     *weights = (int *)malloc(*n * sizeof(int));
     *values = (int *)malloc(*n * sizeof(int));
 
-    printf("\033[1;34m[FILE]\033[0m Reading weights and values from file...\n"); // Blue text for file info
+    printf("\033[1;34m[FILE]\033[0m Reading weights and values from file...\n");
 
-    // Read weights and values from the file
     for (int i = 0; i < *n; i++) {
         fscanf(file, "%d %d", &(*weights)[i], &(*values)[i]);
     }
 
-    // Read the weight capacity
     fscanf(file, "%d", W);
-
     fclose(file);
 }
 
 int main() {
     int *weights, *values, n, W;
-
-    // List of filenames to loop through
     const char *filenames[] = {
         "testcase/knapsack_25_items.txt",
         "testcase/knapsack_50_items.txt",
@@ -51,59 +45,109 @@ int main() {
     };
     int num_files = sizeof(filenames) / sizeof(filenames[0]);
     int result;
-    clock_t start, end;
     double elapsed_time;
 
-    printf("\033[1;32m========== Knapsack Problem Solver ==========\033[0m\n"); // Green title banner
+    // Open CSV file for writing results
+    FILE *csv_file = fopen("results.csv", "w");
+    if (!csv_file) {
+        printf("\033[1;31mError: Could not open results.csv for writing\033[0m\n");
+        exit(1);
+    }
+
+    // Write the header row to the CSV
+    fprintf(csv_file, "File,DP-BottomUp Avg Value,DP-BottomUp Avg Time (ms),DP-TopDown Avg Value,DP-TopDown Avg Time (ms),Greedy Avg Value,Greedy Avg Time (ms),GA Avg Value,GA Avg Time (ms)\n");
+
+    printf("\033[1;32m========== Knapsack Problem Solver ==========\033[0m\n");
 
     for (int i = 0; i < num_files; i++) {
-        printf("\n\033[1;36m[FILE] Processing file: %s\033[0m\n", filenames[i]); // Cyan for file being processed
+        printf("\n\033[1;36m[FILE] Processing file: %s\033[0m\n", filenames[i]);
 
         // Read data from the current file
         read_knapsack_input(filenames[i], &weights, &values, &n, &W);
 
-        printf("\033[1;33mNumber of items:\033[0m %d, \033[1;33mCapacity:\033[0m %d\n", n, W); // Yellow for summary
+        printf("\033[1;33mNumber of items:\033[0m %d, \033[1;33mCapacity:\033[0m %d\n", n, W);
 
-        // Uncomment for BruteForce if implemented
-        // start = clock();
-        // result = BruteForce_Knapsack(n, weights, values, W);
-        // end = clock();
-        // elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
-        // printf("\033[1;31m[RESULT]\033[0m Maximum value (BruteForce): \033[1;31m%d\033[0m | \033[1;31mTime: %.4f seconds\n\033[0m", result, elapsed_time);
+        double total_time_dp_bu = 0, total_time_dp_td = 0, total_time_greedy = 0, total_time_ga = 0;
+        int total_value_dp_bu = 0, total_value_dp_td = 0, total_value_greedy = 0, total_value_ga = 0;
+        struct timespec start, end;
 
-        // Measure time for DP Bottom-Up
-        start = clock();
-        result = DP_BottomUp_Knapsack(n, weights, values, W);
-        end = clock();
-        elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
-        printf("\033[1;32m[RESULT]\033[0m Maximum value (DP-BU): \033[1;32m%d\033[0m | \033[1;32mTime: %.4f seconds\n\033[0m", result, elapsed_time);
+        // Run DP Bottom-Up multiple times
+        for (int j = 0; j < iterateRound; j++) {
+        
+            clock_gettime(CLOCK_MONOTONIC, &start);
+            result = DP_BottomUp_Knapsack(n, weights, values, W);
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            
+            double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+            total_time_dp_bu += elapsed_time;
+            total_value_dp_bu += result;
+        }
 
-        // Measure time for DP Top-Down
-        start = clock();
-        result = DP_TopDown_Knapsack(n, weights, values, W);
-        end = clock();
-        elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
-        printf("\033[1;32m[RESULT]\033[0m Maximum value (DP-TD): \033[1;32m%d\033[0m | \033[1;32mTime: %.4f seconds\n\033[0m", result, elapsed_time);
+        // Run DP Top-Down multiple times
+        for (int j = 0; j < iterateRound; j++) {
 
-        // Measure time for Greedy
-        start = clock();
-        result = Greedy_Knapsack(n, weights, values, W);
-        end = clock();
-        elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
-        printf("\033[1;33m[RESULT]\033[0m Approx. value (Greedy): \033[1;33m%d\033[0m | \033[1;32mTime: %.4f seconds\n\033[0m", result, elapsed_time);
+            clock_gettime(CLOCK_MONOTONIC, &start);
+            result = DP_TopDown_Knapsack(n, weights, values, W);
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            
+            double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+            total_time_dp_td += elapsed_time;
+            total_value_dp_td += result;
+        }
 
-        // Measure time for Genetic Algorithm
-        start = clock();
-        result = GA_Knapsack(n, weights, values, W);
-        end = clock();
-        elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
-        printf("\033[1;34m[RESULT]\033[0m Approx. value (GA): \033[1;34m%d\033[0m | \033[1;32mTime: %.4f seconds\n\033[0m", result, elapsed_time);
+        // Run Greedy Knapsack multiple times
+        for (int j = 0; j < iterateRound; j++) {
 
-        // Free dynamically allocated memory
+            clock_gettime(CLOCK_MONOTONIC, &start);
+            result = Greedy_Knapsack(n, weights, values, W);
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            
+            double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+            total_time_greedy += elapsed_time;
+            total_value_greedy += result;
+        }
+
+        // Run Genetic Algorithm multiple times
+        for (int j = 0; j < iterateRound; j++) {
+            clock_gettime(CLOCK_MONOTONIC, &start);
+            result = GA_Knapsack(n, weights, values, W);
+            clock_gettime(CLOCK_MONOTONIC, &end);
+
+            double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+            total_time_ga += elapsed_time;
+            total_value_ga += result;
+        }
+
+        // Calculate averages and convert to ms
+        double avg_time_dp_bu = ( total_time_dp_bu / iterateRound ) * 1000; 
+        double avg_time_dp_td = ( total_time_dp_td / iterateRound ) * 1000;
+        double avg_time_greedy = ( total_time_greedy / iterateRound ) * 1000;
+        double avg_time_ga = ( total_time_ga / iterateRound ) * 1000;
+
+        int avg_value_dp_bu = total_value_dp_bu / iterateRound;
+        int avg_value_dp_td = total_value_dp_td / iterateRound;
+        int avg_value_greedy = total_value_greedy / iterateRound;
+        int avg_value_ga = total_value_ga / iterateRound;
+
+        printf("\033[1;32m[RESULT]\033[0m DP-BottomUp Avg Value: %d | Avg Time: %.3f ms\n", avg_value_dp_bu, avg_time_dp_bu);
+        printf("\033[1;33m[RESULT]\033[0m DP-TopDown Avg Value: %d | Avg Time: %.3f ms\n", avg_value_dp_td, avg_time_dp_td);
+        printf("\033[1;34m[RESULT]\033[0m Greedy Avg Value: %d | Avg Time: %.3f ms\n", avg_value_greedy, avg_time_greedy);
+        printf("\033[1;36m[RESULT]\033[0m GA Avg Value: %d | Avg Time: %.3f ms\n", avg_value_ga, avg_time_ga);
+
+        // Write results to CSV
+        fprintf(csv_file, "%s,%d,%.3f,%d,%.3f,%d,%.3f,%d,%.3f\n",
+                filenames[i], avg_value_dp_bu, avg_time_dp_bu,
+                avg_value_dp_td, avg_time_dp_td,
+                avg_value_greedy, avg_time_greedy,
+                avg_value_ga, avg_time_ga);
+
         free(weights);
         free(values);
     }
 
-    printf("\n\033[1;32m========== Execution Complete ==========\033[0m\n"); // Green footer banner
+    printf("\n\033[1;32m========== Execution Complete ==========\033[0m\n");
+    fclose(csv_file);
+    printf("\033[1;32mResults saved in 'results.csv'\033[0m\n");
+
     return 0;
 }

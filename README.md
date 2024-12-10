@@ -106,7 +106,7 @@ Follow the prompts to enter the number of items, their weights, values, and tota
 ✅ Generate large input sets for testing:  
 - Create datasets with 25, 50, 100, 500, or 1000 items using `testcase\Gen_Input_Knapsack.py`.
 
-✅ Run-time measurement for each algorithms.
+✅ Run-time measurement for each algorithms and writing an average value to file .csv .
 
 ---
 

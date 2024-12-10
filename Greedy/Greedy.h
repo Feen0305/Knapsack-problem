@@ -16,7 +16,7 @@ int compare(const void* a, const void* b) {
 
 // Greedy approximation for Knapsack Problem
 int Greedy_Knapsack(int n, int weights[], int values[], int capacity) {
-    printf("[COMP]Starting Greedy knapsack computation...\n");
+    // printf("[COMP]Starting Greedy knapsack computation...\n");
     ItemRatio* itemRatios = (ItemRatio*)malloc(n * sizeof(ItemRatio));
 
     // Calculate value-to-weight ratio for each item

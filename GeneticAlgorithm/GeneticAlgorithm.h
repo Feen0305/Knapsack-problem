@@ -274,6 +274,6 @@ static int GA_Process(int n, int *weights, int *values, int W)
 
 int GA_Knapsack(int n, int *weights, int *values, int W)
 {
-    printf("[COMP]Starting Genetic Algorithm knapsack computation...\n");
+    // printf("[COMP]Starting Genetic Algorithm knapsack computation...\n");
     return GA_Process(n, weights, values, W);
 }
