@@ -3,7 +3,7 @@
 
 // Function to solve the 0/1 Knapsack Problem using brute force iterative approach
 int BruteForce_Knapsack(int n, int weights[], int values[], int capacity) {
-    printf("\nStarting Brute force knapsack computation...\n");
+    printf("[COMP]Starting Brute force knapsack computation...\n");
     int maxValue = 0; // To track the maximum value found
     unsigned long long int totalSubsets = (1ULL << n); // Total number of subsets is 2^n
 

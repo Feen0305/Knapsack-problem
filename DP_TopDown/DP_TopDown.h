@@ -40,7 +40,7 @@ int DP_TopDown_Knapsack(int n, int *weights, int *values, int W) {
         }
     }
 
-    printf("\nStarting Dynamic programming TopDown knapsack computation...\n");
+    printf("[COMP]Starting Dynamic programming TopDown knapsack computation...\n");
     int maxVal = DP_TopDown(n - 1, W, n, weights, values, KnapTable);
 
     // Free allocated memory
