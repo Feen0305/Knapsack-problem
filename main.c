@@ -51,6 +51,8 @@ int main() {
     };
     int num_files = sizeof(filenames) / sizeof(filenames[0]);
     int result;
+    clock_t start, end;
+    double elapsed_time;
 
     printf("\033[1;32m========== Knapsack Problem Solver ==========\033[0m\n"); // Green title banner
 
@@ -62,22 +64,40 @@ int main() {
 
         printf("\033[1;33mNumber of items:\033[0m %d, \033[1;33mCapacity:\033[0m %d\n", n, W); // Yellow for summary
 
-        // Call and print results from algorithms
         // Uncomment for BruteForce if implemented
+        // start = clock();
         // result = BruteForce_Knapsack(n, weights, values, W);
-        // printf("\033[1;31m[RESULT]\033[0m Maximum value (BruteForce): %d\n", result);
+        // end = clock();
+        // elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
+        // printf("\033[1;31m[RESULT]\033[0m Maximum value (BruteForce): \033[1;31m%d\033[0m | \033[1;31mTime: %.4f seconds\n\033[0m", result, elapsed_time);
 
+        // Measure time for DP Bottom-Up
+        start = clock();
         result = DP_BottomUp_Knapsack(n, weights, values, W);
-        printf("\033[1;32m[RESULT]\033[0m Maximum value (DP-BU): \033[1;32m%d\033[0m\n", result);
+        end = clock();
+        elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("\033[1;32m[RESULT]\033[0m Maximum value (DP-BU): \033[1;32m%d\033[0m | \033[1;32mTime: %.4f seconds\n\033[0m", result, elapsed_time);
 
+        // Measure time for DP Top-Down
+        start = clock();
         result = DP_TopDown_Knapsack(n, weights, values, W);
-        printf("\033[1;32m[RESULT]\033[0m Maximum value (DP-TD): \033[1;32m%d\033[0m\n", result);
+        end = clock();
+        elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("\033[1;32m[RESULT]\033[0m Maximum value (DP-TD): \033[1;32m%d\033[0m | \033[1;32mTime: %.4f seconds\n\033[0m", result, elapsed_time);
 
+        // Measure time for Greedy
+        start = clock();
         result = Greedy_Knapsack(n, weights, values, W);
-        printf("\033[1;33m[RESULT]\033[0m Approx. value (Greedy): \033[1;33m%d\033[0m\n", result);
+        end = clock();
+        elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("\033[1;33m[RESULT]\033[0m Approx. value (Greedy): \033[1;33m%d\033[0m | \033[1;32mTime: %.4f seconds\n\033[0m", result, elapsed_time);
 
+        // Measure time for Genetic Algorithm
+        start = clock();
         result = GA_Knapsack(n, weights, values, W);
-        printf("\033[1;34m[RESULT]\033[0m Approx. value (GA): \033[1;34m%d\033[0m\n", result);
+        end = clock();
+        elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("\033[1;34m[RESULT]\033[0m Approx. value (GA): \033[1;34m%d\033[0m | \033[1;32mTime: %.4f seconds\n\033[0m", result, elapsed_time);
 
         // Free dynamically allocated memory
         free(weights);

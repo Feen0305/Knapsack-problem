@@ -104,7 +104,9 @@ Follow the prompts to enter the number of items, their weights, values, and tota
 - Dynamic Programming (Bottom-Up & Top-Down), Greedy algorithm, and Genetic Algorithm.  
 
 ✅ Generate large input sets for testing:  
-- Create datasets with 25, 50, 100, 500, or 1000 items using `testcase\Gen_Input_Knapsack.py`.  
+- Create datasets with 25, 50, 100, 500, or 1000 items using `testcase\Gen_Input_Knapsack.py`.
+
+✅ Run-time measurement for each algorithms.
 
 ---
 
