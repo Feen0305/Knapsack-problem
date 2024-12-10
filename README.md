@@ -109,6 +109,7 @@ Follow the prompts to enter the number of items, their weights, values, and tota
 ## 💬 **Screenshots**
 
 *![GA is coming soon...](userinterface.png)*
+Genetic Algorithm is coming soon...
 
 ---
 
@@ -119,10 +120,10 @@ This project would not be possible without the foundational knowledge and inspir
 ---
 
 📧 **Contact Us:**  
-| [GitHub Profile](https://github.com/Muaykillz)
-| [GitHub Profile](https://github.com/NongChugra)
-| [GitHub Profile](https://github.com/HOOd-00)
-| [GitHub Profile](https://github.com/Feen0305)
-| [GitHub Profile](https://github.com/DarkTouiZ)
+| [Muaykillz](https://github.com/Muaykillz)
+| [NongChugra](https://github.com/NongChugra)
+| [HOOd-00](https://github.com/HOOd-00)
+| [Feen0305](https://github.com/Feen0305)
+| [DarkTouiZ](https://github.com/DarkTouiZ)
 
 ---
