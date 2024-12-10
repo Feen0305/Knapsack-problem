@@ -11,9 +11,9 @@ Welcome to the **Knapsack Problem Solver** repository! This project serves as my
 
 This project aims to explore and implement multiple algorithms to solve the **Knapsack Problem**, a classic optimization problem, using the following approaches:
 
-- **Brute Force Approach** 🚀
-- **Dynamic Programming (Bottom-Up & Top-Down)** 💻
-- **Genetic Algorithm** 🧬
+- **Dynamic Programming (Bottom-Up & Top-Down)** 💻  
+- **Greedy Algorithm** ⚡  
+- **Genetic Algorithm** 🧬  
 
 ---
 
@@ -35,23 +35,22 @@ The **Knapsack Problem** is a combinatorial optimization problem. Given a set of
 
 ## ⚙️ **Algorithms Implemented**
 
-### 1️⃣ **Brute Force Approach**
-   - Explores all possible combinations of items using bit manipulation.
-   - Finds the optimal subset by evaluating every possible combination.
-   - Computationally expensive for large inputs but provides a simple brute-force solution.
+### 1️⃣ **Dynamic Programming**
+   - **Bottom-Up DP** 🏆:  
+     Iteratively builds a table from base cases to solve the problem without recursion.  
+   - **Top-Down DP** 📉:  
+     Utilizes recursion and memoization to solve overlapping subproblems efficiently.  
 
 ---
 
-### 2️⃣ **Dynamic Programming**
-   - Bottom-Up DP 🏆:
-     Iteratively builds a table from base cases to solve the problem without recursion.
-   - Top-Down DP 📉:
-     Utilizes recursion and memoization to solve overlapping subproblems efficiently.
+### 2️⃣ **Greedy Algorithm**
+   - Selects items based on their value-to-weight ratio.  
+   - Provides a fast, approximate solution, particularly effective for fractional knapsack problems.
 
 ---
 
 ### 3️⃣ **Genetic Algorithm**
-   - Simulates the principles of evolution (selection, mutation, crossover) to find an optimal or near-optimal solution.
+   - Simulates the principles of evolution (selection, mutation, crossover) to find an optimal or near-optimal solution.  
    - Uses population-based search methods to explore the solution space.
 
 ---
@@ -60,7 +59,7 @@ The **Knapsack Problem** is a combinatorial optimization problem. Given a set of
 
 - **Programming Language:** C  
 - **Tools:** GCC for compilation  
-- **Development Environment:** Visual Studio Code
+- **Development Environment:** Visual Studio Code  
 
 ---
 
@@ -82,7 +81,7 @@ cd knapsack-problem
 You can compile the source code using `gcc`. For example:
 
 ```bash
-gcc gcc main.c -o main.exe
+gcc main.c -o main.exe
 ```
 
 ---
@@ -102,13 +101,15 @@ Follow the prompts to enter the number of items, their weights, values, and tota
 ## 🏆 **Features**
 
 ✅ Multiple Knapsack Problem-solving strategies:  
-- Brute Force, Dynamic Programming (Bottom-Up & Top-Down), and Genetic Algorithm.
+- Dynamic Programming (Bottom-Up & Top-Down), Greedy algorithm, and Genetic Algorithm.  
+
+✅ Generate large input sets for testing:  
+- Create datasets with 25, 50, 100, 500, or 1000 items using `testcase\Gen_Input_Knapsack.py`.  
 
 ---
 
 ## 💬 **Screenshots**
-*![GA is coming soon...](userinterface.png)*
-<br>Genetic Algorithm is coming soon...
+*![TERMINAL](userinterface.png)*
 
 ---
 
@@ -119,10 +120,10 @@ This project would not be possible without the foundational knowledge and inspir
 ---
 
 📧 **Contact Us:**  
-| [Muaykillz](https://github.com/Muaykillz)
-| [NongChugra](https://github.com/NongChugra)
-| [HOOd-00](https://github.com/HOOd-00)
-| [Feen0305](https://github.com/Feen0305)
-| [DarkTouiZ](https://github.com/DarkTouiZ)
+| [Muaykillz](https://github.com/Muaykillz)  
+| [NongChugra](https://github.com/NongChugra)  
+| [HOOd-00](https://github.com/HOOd-00)  
+| [Feen0305](https://github.com/Feen0305)  
+| [DarkTouiZ](https://github.com/DarkTouiZ)  
 
----
+--- 
