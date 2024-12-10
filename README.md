@@ -107,7 +107,6 @@ Follow the prompts to enter the number of items, their weights, values, and tota
 ---
 
 ## 💬 **Screenshots**
-
 *![GA is coming soon...](userinterface.png)*
 <br>Genetic Algorithm is coming soon...
 
