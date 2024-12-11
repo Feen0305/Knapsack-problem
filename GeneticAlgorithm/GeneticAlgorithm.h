@@ -144,7 +144,7 @@ static void advanced_crossover(Individual **parents, Individual *child, int n)
     free(vote);
 }
 
-static int GA_Process(int n, int *weights, int *values, int W)
+static int GA_Process(int n, int *weights, int *values, int W, double Time_Limit, int *Time_Limit_Result)
 {
     srand(time(NULL));
 
@@ -171,19 +171,39 @@ static int GA_Process(int n, int *weights, int *values, int W)
         new_population[i].genes = (int *)calloc(n, sizeof(int));
 
         // สร้างโซลูชันแบบ greedy-random
-        int current_weight = 0;
-        for (int j = 0; j < n && current_weight < W; j++)
+        // 30% แรกใช้ greedy approach
+        if (i < POP_SIZE * 0.3)
         {
-            if (rand() % 100 < (70 - (j * 50 / n)) && // โอกาสลดลงตามลำดับ
-                current_weight + items[j].weight <= W)
+            int current_weight = 0;
+            // เรียงตาม value/weight ratio แล้ว
+            for (int j = 0; j < n && current_weight < W; j++)
             {
-                population[i].genes[j] = 1;
-                current_weight += items[j].weight;
+                if (current_weight + items[j].weight <= W)
+                {
+                    population[i].genes[j] = 1;
+                    current_weight += items[j].weight;
+                }
+            }
+        }
+        // 70% ที่เหลือสร้างแบบ random
+        else
+        {
+            int current_weight = 0;
+            for (int j = 0; j < n; j++)
+            {
+                if ((rand() % 100 < 50) && // โอกาส 50-50
+                    current_weight + items[j].weight <= W)
+                {
+                    population[i].genes[j] = 1;
+                    current_weight += items[j].weight;
+                }
             }
         }
     }
 
     int generations_without_improvement = 0;
+
+    struct timespec CurrentTime;
 
     // Main GA loop
     for (int gen = 0; gen < MAX_GEN; gen++)
@@ -248,6 +268,13 @@ static int GA_Process(int n, int *weights, int *values, int W)
         population = new_population;
         new_population = temp;
 
+        clock_gettime(CLOCK_MONOTONIC, &CurrentTime);
+        double elapsed_time = CurrentTime.tv_sec / 1e9;
+        if (elapsed_time > Time_Limit)
+        {
+            *Time_Limit_Result = best_ever.fitness;
+        }
+
         // Early stopping
         if (generations_without_improvement > 300 && gen > MAX_GEN / 2)
         {
@@ -272,8 +299,8 @@ static int GA_Process(int n, int *weights, int *values, int W)
     return result;
 }
 
-int GA_Knapsack(int n, int *weights, int *values, int W)
+int GA_Knapsack(int n, int *weights, int *values, int W, double Time_Limit, int *Time_Limit_Result)
 {
     // printf("[COMP]Starting Genetic Algorithm knapsack computation...\n");
-    return GA_Process(n, weights, values, W);
+    return GA_Process(n, weights, values, W, Time_Limit, Time_Limit_Result);
 }
