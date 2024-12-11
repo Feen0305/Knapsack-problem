@@ -146,6 +146,11 @@ static void advanced_crossover(Individual **parents, Individual *child, int n)
 
 static int GA_Process(int n, int *weights, int *values, int W, double Time_Limit, int *Time_Limit_Result)
 {
+    struct timespec Start, End;
+    int isTimeExceed = 0;
+
+    clock_gettime(CLOCK_MONOTONIC, &Start);
+
     srand(time(NULL));
 
     // สร้างและเรียงลำดับ items ตาม ratio
@@ -171,39 +176,19 @@ static int GA_Process(int n, int *weights, int *values, int W, double Time_Limit
         new_population[i].genes = (int *)calloc(n, sizeof(int));
 
         // สร้างโซลูชันแบบ greedy-random
-        // 30% แรกใช้ greedy approach
-        if (i < POP_SIZE * 0.3)
+        int current_weight = 0;
+        for (int j = 0; j < n && current_weight < W; j++)
         {
-            int current_weight = 0;
-            // เรียงตาม value/weight ratio แล้ว
-            for (int j = 0; j < n && current_weight < W; j++)
+            if (rand() % 100 < (70 - (j * 50 / n)) && // โอกาสลดลงตามลำดับ
+                current_weight + items[j].weight <= W)
             {
-                if (current_weight + items[j].weight <= W)
-                {
-                    population[i].genes[j] = 1;
-                    current_weight += items[j].weight;
-                }
-            }
-        }
-        // 70% ที่เหลือสร้างแบบ random
-        else
-        {
-            int current_weight = 0;
-            for (int j = 0; j < n; j++)
-            {
-                if ((rand() % 100 < 50) && // โอกาส 50-50
-                    current_weight + items[j].weight <= W)
-                {
-                    population[i].genes[j] = 1;
-                    current_weight += items[j].weight;
-                }
+                population[i].genes[j] = 1;
+                current_weight += items[j].weight;
             }
         }
     }
 
     int generations_without_improvement = 0;
-
-    struct timespec CurrentTime;
 
     // Main GA loop
     for (int gen = 0; gen < MAX_GEN; gen++)
@@ -268,11 +253,12 @@ static int GA_Process(int n, int *weights, int *values, int W, double Time_Limit
         population = new_population;
         new_population = temp;
 
-        clock_gettime(CLOCK_MONOTONIC, &CurrentTime);
-        double elapsed_time = CurrentTime.tv_sec / 1e9;
-        if (elapsed_time > Time_Limit)
+        clock_gettime(CLOCK_MONOTONIC, &End);
+        double elapsed_time = (End.tv_sec - Start.tv_sec) + (End.tv_nsec - Start.tv_nsec) / 1e9;
+        if (elapsed_time > Time_Limit && !isTimeExceed)
         {
             *Time_Limit_Result = best_ever.fitness;
+            isTimeExceed = 1;
         }
 
         // Early stopping

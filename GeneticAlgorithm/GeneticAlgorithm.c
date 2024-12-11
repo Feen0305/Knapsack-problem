@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "GeneticAlgorithm.h"
 
 // Function to get input data from user
@@ -47,12 +48,19 @@ int main()
     // Get input data
     initialize_sample(&weights, &values, &n, &W);
 
+    double Time_Limit;
+    printf("Enter the time limit for the GA in seconds: ");
+    scanf("%lf", &Time_Limit);
+
+    int Time_Limit_Result; 
+
     // Run genetic algorithm
-    int result = GA_Knapsack(n, weights, values, W);
+    int result = GA_Knapsack(n, weights, values, W, Time_Limit, &Time_Limit_Result);
 
     // Print result
-    printf("[RESULT]Maximum value found using GA: %d\n", result);
-
+    printf("[RESULT] Maximum value found using GA: %d\n", result);
+    printf("[RESULT] Maximum value found within time limit: %d\n", Time_Limit_Result);
+    
     // Free memory
     free(weights);
     free(values);
