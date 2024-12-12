@@ -1,6 +1,6 @@
-File,DP-BottomUp Avg Value,DP-BottomUp Avg Time (ms),DP-TopDown Avg Value,DP-TopDown Avg Time (ms),Greedy Avg Value,Greedy Avg Time (ms),GA Avg Value,GA Avg Value within Time, GA Avg Time (ms)
-testcase/knapsack_25_items.txt,6349,0.126,6349,0.173,6349,0.000,6349,3686,32.479
-testcase/knapsack_50_items.txt,10370,0.435,10370,0.869,10370,0.000,10370,5514,51.699
-testcase/knapsack_100_items.txt,23059,1.725,23059,3.591,23052,0.000,23059,13653,94.899
-testcase/knapsack_500_items.txt,79409,18.951,79409,60.430,79392,0.000,79407,61747,466.113
-testcase/knapsack_1000_items.txt,127659,45.889,127659,160.185,127650,0.000,127652,100325,889.304
+File,DP-BottomUp Avg Value,DP-BottomUp Avg Time (ms),DP-TopDown Avg Value,DP-TopDown Avg Time (ms),Greedy Avg Value,Greedy Avg Time (ms),GA Greedy Random Avg Value,GA Greedy Random within Time Avg Value,GA Greedy Random Avg Time (ms),GA Greedy Population Avg Value,GA Greedy Population Avg Time (ms)
+testcase/knapsack_25_items.txt,6349,0.309,6349,0.301,6349,0.006,6349,3502,44.882,6349,43.015
+testcase/knapsack_50_items.txt,10370,0.549,10370,0.979,10370,0.004,10370,5724,64.296,10370,63.342
+testcase/knapsack_100_items.txt,23059,2.320,23059,4.538,23052,0.008,23059,11848,130.245,23059,125.627
+testcase/knapsack_500_items.txt,79409,24.155,79409,59.864,79392,0.057,79405,61821,589.245,79407,662.181
+testcase/knapsack_1000_items.txt,127659,60.005,127659,161.878,127650,0.160,127652,99116,1655.680,127654,1290.612

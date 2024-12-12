@@ -52,15 +52,17 @@ int main()
     printf("Enter the time limit for the GA in seconds: ");
     scanf("%lf", &Time_Limit);
 
-    int Time_Limit_Result; 
+    int Time_Limit_Result;
 
     // Run genetic algorithm
-    int result = GA_Knapsack(n, weights, values, W, Time_Limit, &Time_Limit_Result);
+    int result1 = GreedyRandom_GA_Knapsack(n, weights, values, W, Time_Limit, &Time_Limit_Result);
+    int result2 = GreedyPop_GA_Knapsack(n, weights, values, W);
 
     // Print result
-    printf("[RESULT] Maximum value found using GA: %d\n", result);
+    printf("[RESULT] Maximum value found using Greedy Random GA: %d\n", result1);
     printf("[RESULT] Maximum value found within time limit: %d\n", Time_Limit_Result);
-    
+    printf("[RESULT] Maximum value found using Greedy Population GA: %d\n", result2);
+
     // Free memory
     free(weights);
     free(values);
