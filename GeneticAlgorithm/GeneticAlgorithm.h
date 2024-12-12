@@ -118,7 +118,7 @@ static void repair_solution(Individual *ind, Item *items, int n, int W)
     }
 }
 
-// Multi-parent crossover
+// Multi-parent Combination
 static void advanced_crossover(Individual **parents, Individual *child, int n)
 {
     int *vote = (int *)calloc(n, sizeof(int));
