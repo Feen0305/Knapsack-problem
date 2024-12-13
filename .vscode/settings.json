@@ -2,6 +2,7 @@
     "files.associations": {
         "geneticalgorithm.h": "c",
         "time.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "dp_buttomup.h": "c"
     }
 }
