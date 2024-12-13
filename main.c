@@ -8,7 +8,8 @@
 #include "DP_ButtomUp/DP_ButtomUp.h"
 #include "DP_TopDown/DP_TopDown.h"
 #include "Greedy\Greedy.h"
-#include "GeneticAlgorithm\GeneticAlgorithm.h"
+#include "GeneticAlgorithm\GeneticAlgorithm-GreedyRandom.h"
+#include "GeneticAlgorithm\GeneticAlgorithm-GreedyPopulation.h"
 
 #define iterateRound 3
 
