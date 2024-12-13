@@ -1,6 +1,0 @@
-File,DP-BottomUp Avg Value,DP-BottomUp Avg Time (ms),DP-TopDown Avg Value,DP-TopDown Avg Time (ms),Greedy Avg Value,Greedy Avg Time (ms),GA Greedy Random Avg Value,GA Greedy Random within Time Avg Value,GA Greedy Random Avg Time (ms),GA Greedy Population Avg Value,GA Greedy Population Avg Time (ms)
-testcase/knapsack_25_items.txt,1575,0.182,1575,0.110,1575,0.006,1575,773,34.554,1575,33.236
-testcase/knapsack_50_items.txt,5825,0.503,5825,0.559,5825,0.006,5825,3256,54.155,5825,51.263
-testcase/knapsack_100_items.txt,21921,1.944,21921,4.800,21921,0.010,21921,11159,98.286,21921,94.832
-testcase/knapsack_500_items.txt,235252,49.663,235252,149.616,235252,0.070,235252,192491,407.551,235252,405.174
-testcase/knapsack_1000_items.txt,616128,181.410,616128,556.502,615874,0.097,616032,507046,780.360,616046,750.365
